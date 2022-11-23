@@ -5,7 +5,7 @@ File                      | % Stmts | % Branch | % Funcs | % Lines | Uncovered L
 
 --------------------------|---------|----------|---------|---------|---------------------------------------------------------------------------------------------
 
-All files                 |   87.75 |    82.55 |   87.32 |   87.75 |                                                                                             
+All files                 |   87.83 |    82.55 |   87.32 |   87.83 |                                                                                             
 
  src                      |   84.65 |    80.82 |   85.18 |   84.65 |                                                                                             
 
@@ -31,15 +31,15 @@ All files                 |   87.75 |    82.55 |   87.32 |   87.75 |
 
  src/analytics/controller |     100 |    94.44 |     100 |     100 |                                                                                             
 
-  analytics.controller.ts |     100 |    94.44 |     100 |     100 | 244                                                                                         
+  analytics.controller.ts |     100 |    94.44 |     100 |     100 | 245                                                                                         
 
  src/analytics/entity     |     100 |      100 |     100 |     100 |                                                                                             
 
   analytics.entity.ts     |     100 |      100 |     100 |     100 |                                                                                             
 
- src/analytics/service    |   99.65 |    97.43 |     100 |   99.65 |                                                                                             
+ src/analytics/service    |   99.68 |    97.43 |     100 |   99.68 |                                                                                             
 
-  analytics.service.ts    |   99.65 |    97.43 |     100 |   99.65 | 106                                                                                         
+  analytics.service.ts    |   99.68 |    97.43 |     100 |   99.68 | 106                                                                                         
 
  src/auth                 |     100 |      100 |     100 |     100 |                                                                                             
 
