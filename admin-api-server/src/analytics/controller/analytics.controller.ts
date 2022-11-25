@@ -6,11 +6,14 @@ import {
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
+import { IsInt, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
 import {
   MetricEntity,
   MetricParams,
   Resolution,
   Activity,
+  Purchase,
 } from '../entity/analytics.entity.js';
 import { ParseJSONPipe } from '../../pipes/ParseJSONPipe.js';
 import { ParseJSONObjectPipe } from '../../pipes/ParseJSONObjectPipe.js';
@@ -25,6 +28,18 @@ import {
   queryParamsToPaginationParams,
   validatePaginationParams,
 } from '../../utils.js';
+
+class PurchasesParams {
+  @IsInt()
+  @Type(() => Number)
+  @IsOptional()
+  from_index?: number;
+
+  @IsInt()
+  @Type(() => Number)
+  @IsOptional()
+  to_index?: number;
+}
 
 @Controller('analytics')
 export class AnalyticsController {
@@ -324,5 +339,15 @@ export class AnalyticsController {
       ...queryParamsToPaginationParams(sort, range),
       filters: filters,
     };
+  }
+
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @RolesDecorator(Roles.admin)
+  @Get('purchases')
+  async purchases(@Query() params: PurchasesParams): Promise<Purchase[]> {
+    return await this.analyticsService.getPurchases(
+      params.from_index,
+      params.to_index,
+    );
   }
 }
