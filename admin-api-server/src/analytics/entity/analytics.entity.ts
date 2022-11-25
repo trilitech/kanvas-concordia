@@ -59,3 +59,15 @@ export interface Purchase {
 
   gas_fees: number;
 }
+
+export interface UserAnalytics {
+  index: number;
+  wallet_address: string;
+  registered_at: Date;
+
+  email?: string;
+  marketing_consent?: boolean;
+  age_verification?: boolean;
+
+  has_purchases: boolean;
+}

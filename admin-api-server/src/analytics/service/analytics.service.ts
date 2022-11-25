@@ -6,6 +6,7 @@ import {
   Activity,
   MarketingEntity,
   Purchase,
+  UserAnalytics,
 } from '../entity/analytics.entity.js';
 import { PG_CONNECTION_STORE_REPLICATION } from '../../constants.js';
 import { ActivityFilterParams } from '../params.js';
@@ -558,5 +559,63 @@ ORDER BY index
         };
       }),
     );
+  }
+
+  async getUsersConcordiaAnalytics(
+    fromIndex?: number,
+    toIndex?: number,
+    filterOnHasPurchases?: boolean,
+  ): Promise<UserAnalytics[]> {
+    const qryRes = await this.storeRepl.query(
+      `
+SELECT DISTINCT ON (index)
+  q.*,
+  last_value(marketing.email) OVER w AS email,
+  last_value(consent) OVER w AS marketing_consent
+FROM (
+  SELECT
+    ROW_NUMBER() OVER (ORDER BY q.id) AS index,
+    q.*
+  FROM (
+    SELECT
+      usr.id,
+      usr.address,
+      usr.created_at,
+      EXISTS (SELECT 1 FROM mtm_kanvas_user_nft WHERE kanvas_user_id = usr.id LIMIT 1) AS has_purchases
+    FROM kanvas_user AS usr
+  ) q
+  WHERE ($3::bool IS NULL OR has_purchases = $3)
+) q
+LEFT JOIN marketing
+  ON marketing.address = q.address
+
+WHERE ($1::int IS NULL OR q.index >= $1)
+  AND ($2::int IS NULL OR q.index <= $2)
+
+WINDOW w AS (
+  PARTITION BY q.index
+  ORDER BY marketing.created_at
+  ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+)
+
+ORDER BY index
+      `,
+      [fromIndex, toIndex, filterOnHasPurchases],
+    );
+
+    return qryRes.rows.map((row: any): UserAnalytics => {
+      return {
+        index: Number(row['index']),
+        wallet_address: row['address'],
+        registered_at: row['created_at'],
+
+        email: row['email'] != null ? row['email'] : undefined,
+        marketing_consent:
+          row['email'] != null ? row['marketing_consent'] : undefined,
+        age_verification: row['email'] != null ? true : false,
+
+        has_purchases: row['has_purchases'],
+      };
+    });
   }
 }
