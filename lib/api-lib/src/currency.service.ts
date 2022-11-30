@@ -174,17 +174,16 @@ WHERE at <= $1
     if (typeof this.dbConn === 'undefined') {
       return;
     }
-    return;
-//    await withTransaction(this.dbConn, async (dbTx: DbTransaction) => {
-//      for (const currency of Object.keys(this.rates)) {
-//        dbTx.query(`
-//INSERT INTO currency_rate (
-//  currency, rate
-//)
-//VALUES ($1, $2)
-//        `, [currency, this.rates[currency]]);
-//      }
-//    });
+    await withTransaction(this.dbConn, async (dbTx: DbTransaction) => {
+      for (const currency of Object.keys(this.rates)) {
+        dbTx.query(`
+INSERT INTO currency_rate (
+  currency, rate
+)
+VALUES ($1, $2)
+        `, [currency, this.rates[currency]]);
+      }
+    });
   }
 }
 
