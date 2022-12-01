@@ -348,8 +348,56 @@ export class AnalyticsController {
     };
   }
 
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @RolesDecorator(Roles.admin)
+  /**
+   * @apiGroup Analytics
+   * @api {get} /analytics/purchases_concordia Purchases analytics
+   * @apiDescription This endpoint will return a list of NFT purchases, from from_index to to_index. Note that there will be an upper limit of to_index - from_index.
+   * @apiQuery {Number} [from_index] select rows from index=from_index (inclusive)
+   * @apiQuery {Number} [to_index] select rows until index=from_index (inclusive)
+   *
+   * @apiSuccessExample Example Success-Response:
+   *
+   *    [
+   *        {
+   *            "index": 1,
+   *            "wallet_address": "tz2JjcM2wo1GC3DxV8ra2Kb95Upswj39ueCa",
+   *            "marketing_consent": false,
+   *            "age_verification": true,
+   *            "email": "rick@test.com"
+   *            "token_collection": "devils",
+   *            "token_id": 11,
+   *            "token_purchased_at": "2022-11-02T17:07:45.878Z",
+   *            "token_value": 50.10,
+   *            "transaction_currency": "GBP",
+   *            "transaction_value": 50.10,
+   *            "conversion_rate": 1,
+   *            "Vat_rate": 0.2,
+   *            "gas_fees": 0.20,
+   *            "purchaser_country": "GB",
+   *        },
+   *        {
+   *            "index": 2
+   *            "wallet_address": "tz2JjcM2wo1GC3DxV8ra2Kb95Upswj39ueCc",
+   *            "marketing_consent": true,
+   *            "age_verification": true,
+   *            "email": "rick2@test.com"
+   *            "token_collection": "devils",
+   *            "token_id": 12,
+   *            "token_purchased_at": "2022-11-02T17:07:45.878Z",
+   *            "token_value": 50.10,
+   *            "transaction_currency": "XTZ",
+   *            "transaction_value": 33.67,
+   *            "conversion_rate": 1.5,
+   *            "vat_rate": 0.25,
+   *            "gas_fees": 0.20,
+   *            "purchaser_country": "DE",
+   *        }
+   *    ]
+   *
+   * @apiName purchases_concordia
+   */
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesDecorator(Roles.admin)
   @Get('purchases_concordia')
   async purchases(
     @Query() params: ConcordiaAnalyticsPagination,
@@ -360,8 +408,41 @@ export class AnalyticsController {
     );
   }
 
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @RolesDecorator(Roles.admin)
+  /**
+   * @apiGroup Analytics
+   *
+   * @api {get} /analytics/users_concordia Request user analytics
+   * @apiDescription This endpoint will return a list of registered users, including a has_purchases field which is true when the user has bought at least 1 Nft, from from_index to to_index. Note that there will be an upper limit of to_index - from_index.
+   *
+   * @apiQuery {Number} [from_index] select rows from index=from_index (inclusive)
+   * @apiQuery {Number} [to_index] select rows until index=from_index (inclusive)
+   * @apiQuery {String} [filter] select only users that have purchased (when filter is set to "has_purchases"), or select only users that have not purchased yet (when filter is set to "has_no_purchases")
+   *
+   * @apiSuccessExample Example Success-Response:
+   *
+   *    [
+   *        {
+   *            "index": 1
+   *            "wallet_address": "tz2JjcM2wo1GC3DxV8ra2Kb95Upswj39ueCa",
+   *            "marketing_consent": false,
+   *            "age_verification": true,
+   *            "email": "rick@test.com",
+   *            "registered_at": "2022-11-02T17:07:45.878Z",
+   *            "has_purchases": true,
+   *        },{
+   *            "index": 1
+   *            "wallet_address": "tz2JjcM2wo1GC3DxV8ra2Kb95Upswj39ueCd",
+   *            "marketing_consent": false,
+   *            "age_verification": true,
+   *            "email": "rick@test.com",
+   *            "registered_at": "2022-11-03T07:07:45.878Z",
+   *            "has_purchases": false,
+   *        }
+   *    ]
+   * @apiName users_concordia
+   */
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesDecorator(Roles.admin)
   @Get('users_concordia')
   async usersConcordiaAnalytics(
     @Query() params: UsersConcordiaAnalytics,
