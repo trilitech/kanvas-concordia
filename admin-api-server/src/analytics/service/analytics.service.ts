@@ -345,13 +345,15 @@ LIMIT ${params.pageSize}
             Number(row['price']),
             BASE_CURRENCY,
           );
+          const currency = 'XTZ';
           const historicRates = await this.currencyService.ratesAt(
+            currency,
             row['timestamp'],
           );
           const feeInBaseCurrency: number =
             this.currencyService.convertFromCurrency(
               Number(row['mutez_fee']) / 1000000,
-              'XTZ',
+              currency,
               historicRates,
               false,
             );
@@ -583,12 +585,14 @@ ORDER BY index
         const feeXTZ =
           (Number(row['transfer_mutez_fee']) + Number(row['mint_mutez_fee'])) /
           1000000;
+        const currency = 'XTZ';
         const historicRates = await this.currencyService.ratesAt(
+          currency,
           row['timestamp'],
         );
         const feeInBaseCurrency = this.currencyService.convertFromCurrency(
           feeXTZ,
-          'XTZ',
+          currency,
           historicRates,
           false,
         );
