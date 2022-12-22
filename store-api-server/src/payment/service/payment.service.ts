@@ -255,7 +255,7 @@ export class PaymentService {
 SELECT provider
 FROM payment
 WHERE nft_order_id = $1
-  AND id != $2
+  AND payment_id != $2
   AND NOT status = ANY($3)
       `,
         [order.id, paymentId, this.FINAL_STATES],
