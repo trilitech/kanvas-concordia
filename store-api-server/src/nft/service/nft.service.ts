@@ -30,6 +30,7 @@ import { CurrencyService, BASE_CURRENCY } from 'kanvas-api-lib';
 import { sleep, maybe } from '../../utils.js';
 import { NftIpfsService } from './ipfs.service.js';
 import { DbTransaction, withTransaction } from '../../db.module.js';
+import { getFromDipdup } from '../../user/service/dipdup.js';
 
 @Injectable()
 export class NftService {
@@ -491,6 +492,13 @@ FROM price_bounds($1, $2, $3, $4, $5)
       }
 
       res.totalNftCount = Number(nftIds.rows[0].total_nft_count);
+      let dipDupNfts: any[] = []
+      if (filters.userAddress != null) {
+        dipDupNfts = await getFromDipdup(filters.userAddress);
+        res.totalNftCount += dipDupNfts.length
+      }
+
+      res.totalNftCount = Number(nftIds.rows[0].total_nft_count);
       res.numberOfPages = Math.ceil(res.totalNftCount / filters.pageSize);
       res.nfts = await this.findByIds(
         nftIds.rows.map((row: any) => row.nft_id),
@@ -499,6 +507,7 @@ FROM price_bounds($1, $2, $3, $4, $5)
         filters.orderDirection,
         currency,
       );
+      res.nfts = dipDupNfts.concat(res.nfts)
       return res;
     } catch (err) {
       Logger.error('Error on nft filtered query, err: ' + err);
