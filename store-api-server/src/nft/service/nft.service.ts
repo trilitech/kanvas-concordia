@@ -492,6 +492,7 @@ FROM price_bounds($1, $2, $3, $4, $5)
       }
 
       res.totalNftCount = Number(nftIds.rows[0].total_nft_count);
+
       let dipDupNfts: any[] = []
       if (filters.userAddress != null) {
         dipDupNfts = await getFromDipdup(filters.userAddress);

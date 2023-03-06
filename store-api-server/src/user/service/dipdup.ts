@@ -6,7 +6,7 @@ export async function getFromDipdup(walletAddress: string) {
           amount: 1,
           contract: 'KT1JUt1DNTsZC14KAxdSop34TWBZhvZ7P9a3',
           token_id: 1,
-          metadataUri: 'ipfs:/abc',
+          metadataUri: 'ipfs://Qme7xzWWcCMcgu9g2eaEAfk6bJRHHRsUfF3AvYc8BDg1NN',
           metadata: {
             id: 1,
             name: '1/23 McLaren F1 Collectible',
