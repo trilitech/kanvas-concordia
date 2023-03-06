@@ -3,8 +3,8 @@ export async function getFromDipdup(walletAddress: string) {
     data: {
       user: [
         {
-          amount: 1,
-          contract: 'KT1JUt1DNTsZC14KAxdSop34TWBZhvZ7P9a3',
+          amount: 2,
+          contract: 'KT1BRADdqGk2eLmMqvyWzqVmPQ1RCBCbW5dY',
           token_id: 1,
           metadataUri: 'ipfs://Qme7xzWWcCMcgu9g2eaEAfk6bJRHHRsUfF3AvYc8BDg1NN',
           metadata: {
@@ -109,6 +109,8 @@ export async function getFromDipdup(walletAddress: string) {
       proxyNftId: undefined,
       thumbnailIpfs: u.metadata.thumbnailUri,
       thumbnailUri: `${IPFS_GATEWAY}${u.metadata.thumbnailUri.split('ipfs://')[1]}`, // or cloudflare url?
+
+      contractAddress: 'KT1BRADdqGk2eLmMqvyWzqVmPQ1RCBCbW5dY'
     }
   })
 }
