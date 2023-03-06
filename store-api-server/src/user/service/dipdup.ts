@@ -75,7 +75,7 @@ export async function getFromDipdup(walletAddress: string) {
       }
     };
   
-    return {
+    return (new Array(u.amount)).fill({
       artifactIpfs: u.metadata.artifactUri,
       artifactUri: `${IPFS_GATEWAY}${u.metadata.artifactUri.split('ipfs://')[1]}`, // or cloudflare url?
       categories: [{
@@ -89,7 +89,7 @@ export async function getFromDipdup(walletAddress: string) {
       displayUri: `${IPFS_GATEWAY}${u.metadata.displayUri.split('ipfs://')[1]}`, // or cloudflare url?
       editionsAvailable: 0,
       editionsSize: 119526,
-      editionsSold: u.amount, // is this correct?
+      editionsSold: 1,
       formats,
       id: u.token_id,
       ipfsHash: u.metadataUri,
@@ -110,7 +110,7 @@ export async function getFromDipdup(walletAddress: string) {
       thumbnailIpfs: u.metadata.thumbnailUri,
       thumbnailUri: `${IPFS_GATEWAY}${u.metadata.thumbnailUri.split('ipfs://')[1]}`, // or cloudflare url?
 
-      contractAddress: 'KT1BRADdqGk2eLmMqvyWzqVmPQ1RCBCbW5dY'
-    }
-  })
+      contractAddress: u.contract
+    })
+  }).flat()
 }
