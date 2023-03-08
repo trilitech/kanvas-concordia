@@ -36,7 +36,7 @@ export async function getFromDipdup(walletAddress: string) {
     )
   }
 
-  const IPFS_GATEWAY = `https://cloudflare-ipfs.com/ipfs/`
+  const IPFS_GATEWAY = process.env['IPFS_GATEWAY_URL']
 
   return axiosResponse.user.filter((u: any) => u.amount > 0).map((u: any) => {
     const create_token = axiosTokenMetadataResponse.data.create_token.find((ct: any) => ct.contract == u.contract && ct.token_id == u.token_id)
@@ -46,12 +46,12 @@ export async function getFromDipdup(walletAddress: string) {
 
     return {
       artifactIpfs: metadata.artifactUri,
-      artifactUri: `${IPFS_GATEWAY}${metadata.artifactUri.split('ipfs://')[1]}`, // or cloudflare url?
+      artifactUri: `${IPFS_GATEWAY}${metadata.artifactUri.split('ipfs://')[1]}`,
       categories: [],
       createdAt: new Date(create_token.timestamp),
       description: metadata.description,
       displayIpfs: metadata.displayUri,
-      displayUri: `${IPFS_GATEWAY}${metadata.displayUri.split('ipfs://')[1]}`, // or cloudflare url?
+      displayUri: `${IPFS_GATEWAY}${metadata.displayUri.split('ipfs://')[1]}`,
       editionsAvailable: 0,
       editionsSize: create_token.count,
       editionsSold: u.amount,
