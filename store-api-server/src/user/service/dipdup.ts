@@ -48,7 +48,7 @@ export async function getFromDipdup(walletAddress: string) {
       artifactIpfs: metadata.artifactUri,
       artifactUri: `${IPFS_GATEWAY}${metadata.artifactUri.split('ipfs://')[1]}`, // or cloudflare url?
       categories: [],
-      createdAt: new Date(), // ??
+      createdAt: new Date(create_token.timestamp),
       description: metadata.description,
       displayIpfs: metadata.displayUri,
       displayUri: `${IPFS_GATEWAY}${metadata.displayUri.split('ipfs://')[1]}`, // or cloudflare url?
