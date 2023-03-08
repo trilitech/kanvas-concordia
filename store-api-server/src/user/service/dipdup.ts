@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common'
 import axios from 'axios'
 export async function getFromDipdup(walletAddress: string) {
   const axiosTokenMetadataResponse = (await axios({
@@ -20,7 +19,6 @@ export async function getFromDipdup(walletAddress: string) {
       }`
     }
   }))?.data
-  Logger.warn(`dipdup token metadata: ${JSON.stringify(axiosTokenMetadataResponse)}`)
   if (axiosTokenMetadataResponse.data.errors?.length) {
     throw new Error(
       `error from hasura on create-token request: ${axiosTokenMetadataResponse.data.errors[0].message}`
@@ -31,14 +29,13 @@ export async function getFromDipdup(walletAddress: string) {
     method: 'get',
     headers: { 'x-hasura-admin-secret': 'changeme' },
   }))?.data
-  Logger.warn(`dipdup user by address: ${JSON.stringify(axiosResponse)}`)
   if (axiosResponse.errors?.length) {
     throw new Error(
       `error from hasura on get_user_by_address request: ${axiosResponse.errors[0].message}`
     )
   }
 
-  const IPFS_GATEWAY = `https://tzconnect.mypinata.cloud/ipfs/`
+  const IPFS_GATEWAY = `https://cloudflare-ipfs.com/ipfs/`
 
   return axiosResponse.user.filter((u: any) => u.amount > 0).map((u: any) => {
     const create_token = axiosTokenMetadataResponse.data.create_token.find((ct: any) => ct.contract == u.contract && ct.token_id == u.token_id)
