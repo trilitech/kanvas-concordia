@@ -15,6 +15,7 @@ export async function getFromDipdup(walletAddress: string) {
           metadata_uri
           timestamp
           token_id
+          count
         }
       }`
     }
