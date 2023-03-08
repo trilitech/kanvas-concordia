@@ -472,6 +472,9 @@ FROM price_bounds($1, $2, $3, $4, $5)
         ],
       );
 
+      const dipDupNfts: any[] = (filters.userAddress != null ? await getFromDipdup(filters.userAddress) : [])
+        .sort((a: any, b: any) => b.createdAt - a.createdAt);
+
       const res = <NftEntityPage>{
         currentPage: filters.page,
         numberOfPages: 0,
@@ -487,29 +490,22 @@ FROM price_bounds($1, $2, $3, $4, $5)
           currency,
         ),
       };
-      if (nftIds.rows.length === 0) {
+
+      if (nftIds.rows.length === 0 && dipDupNfts.length === 0) {
         return res;
       }
 
-      res.totalNftCount = Number(nftIds.rows[0].total_nft_count);
-
-      let dipDupNfts: any[] = []
-      if (filters.userAddress != null) {
-        dipDupNfts = await getFromDipdup(filters.userAddress);
-        dipDupNfts.sort((a, b) => b.createdAt - a.createdAt);
-        res.totalNftCount += dipDupNfts.length
-      }
-
-      res.totalNftCount = Number(nftIds.rows[0].total_nft_count);
+      res.totalNftCount = Number(nftIds.rows[0]?.total_nft_count) + dipDupNfts.length;
       res.numberOfPages = Math.ceil(res.totalNftCount / filters.pageSize);
-      res.nfts = await this.findByIds(
-        nftIds.rows.map((row: any) => row.nft_id),
-        filters.userAddress,
-        orderBy,
-        filters.orderDirection,
-        currency,
+      res.nfts = dipDupNfts.concat(
+        await this.findByIds(
+          nftIds.rows.map((row: any) => row.nft_id),
+          filters.userAddress,
+          orderBy,
+          filters.orderDirection,
+          currency,
+        )
       );
-      res.nfts = dipDupNfts.concat(res.nfts)
       return res;
     } catch (err) {
       Logger.error('Error on nft filtered query, err: ' + err);
