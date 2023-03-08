@@ -38,8 +38,8 @@ export async function getFromDipdup(walletAddress: string) {
 
   const IPFS_GATEWAY = `https://cloudflare-ipfs.com/ipfs/`
 
-  return axiosResponse.data.user.filter(u => u.amount > 0).map((u) => {
-    const create_token = axiosTokenMetadataResponse.data.create_token.find(ct => ct.contract == u.contract && ct.token_id == u.token_id)
+  return axiosResponse.data.user.filter((u: any) => u.amount > 0).map((u: any) => {
+    const create_token = axiosTokenMetadataResponse.data.create_token.find((ct: any) => ct.contract == u.contract && ct.token_id == u.token_id)
     if (create_token === undefined) throw new Error(`token metadata undefined: ${u.contract} ${u.token_id}`)
     const metadata = create_token.metadata
     const metadataUri = create_token.metadata_uri
