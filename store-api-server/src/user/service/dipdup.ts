@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common'
 import axios from 'axios'
 export async function getFromDipdup(walletAddress: string) {
   const axiosTokenMetadataResponse = await axios({
@@ -19,6 +20,7 @@ export async function getFromDipdup(walletAddress: string) {
       }`
     }
   })
+  Logger.warn(`dipdup token metadata: ${axiosTokenMetadataResponse}`)
   if (axiosTokenMetadataResponse.data.errors?.length) {
     throw new Error(
       `error from hasura on create-token request: ${axiosTokenMetadataResponse.data.errors[0].message}`
@@ -29,6 +31,7 @@ export async function getFromDipdup(walletAddress: string) {
     method: 'get',
     headers: { 'x-hasura-admin-secret': 'changeme' },
   })
+  Logger.warn(`dipdup user by address: ${axiosResponse}`)
   if (axiosResponse.data.errors?.length) {
     throw new Error(
       `error from hasura on get_user_by_address request: ${axiosResponse.data.errors[0].message}`
