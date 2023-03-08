@@ -1,8 +1,7 @@
 import axios from 'axios'
-import { HASURA_URL } from '../../constants'
 export async function getFromDipdup(walletAddress: string) {
   const axiosTokenMetadataResponse = await axios({
-    url: `http://${HASURA_URL}:8080/v1/graphql`,
+    url: `http://${process.env['HASURA_URL']}:8080/v1/graphql`,
     method: 'post',
     headers: { 'x-hasura-admin-secret': 'changeme' },
     data: {
@@ -26,7 +25,7 @@ export async function getFromDipdup(walletAddress: string) {
     )
   }
   const axiosResponse = await axios({
-    url: `http://${HASURA_URL}:8080/api/rest/get_user_by_address?address=${walletAddress}`,
+    url: `http://${process.env['HASURA_URL']}:8080/api/rest/get_user_by_address?address=${walletAddress}`,
     method: 'get',
     headers: { 'x-hasura-admin-secret': 'changeme' },
   })
