@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common'
 import axios from 'axios'
 export async function getFromDipdup(walletAddress: string) {
-  const axiosTokenMetadataResponse = await axios({
+  const axiosTokenMetadataResponse = (await axios({
     url: `http://${process.env['HASURA_URL']}:8080/v1/graphql`,
     method: 'post',
     headers: { 'x-hasura-admin-secret': 'changeme' },
@@ -19,18 +19,18 @@ export async function getFromDipdup(walletAddress: string) {
         }
       }`
     }
-  })
+  }))?.data
   Logger.warn(`dipdup token metadata: ${JSON.stringify(axiosTokenMetadataResponse)}`)
   if (axiosTokenMetadataResponse.data.errors?.length) {
     throw new Error(
       `error from hasura on create-token request: ${axiosTokenMetadataResponse.data.errors[0].message}`
     )
   }
-  const axiosResponse = await axios({
+  const axiosResponse = (await axios({
     url: `http://${process.env['HASURA_URL']}:8080/api/rest/get_user_by_address?address=${walletAddress}`,
     method: 'get',
     headers: { 'x-hasura-admin-secret': 'changeme' },
-  })
+  }))?.data
   Logger.warn(`dipdup user by address: ${JSON.stringify(axiosResponse)}`)
   if (axiosResponse.data.errors?.length) {
     throw new Error(
