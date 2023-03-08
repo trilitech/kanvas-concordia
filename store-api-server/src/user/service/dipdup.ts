@@ -52,7 +52,7 @@ export async function getFromDipdup(walletAddress: string) {
       displayIpfs: metadata.displayUri,
       displayUri: `${IPFS_GATEWAY}${metadata.displayUri.split('ipfs://')[1]}`, // or cloudflare url?
       editionsAvailable: 0,
-      editionsSize: 7777,
+      editionsSize: create_token.count,
       editionsSold: u.amount,
       formats: {},
       id: u.token_id,
