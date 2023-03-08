@@ -159,3 +159,5 @@ export const TOKEN_METADATA_TOKEN_COLUMN: string =
 
 export const RECAPTCHA_ENABLED = process.env['RECAPTCHA_ENABLED'] === 'true';
 export const RECAPTCHA_SECRET = process.env['RECAPTCHA_SECRET'];
+
+export const HASURA_URL = process.env['HASURA_URL'];

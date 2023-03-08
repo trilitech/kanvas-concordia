@@ -1,105 +1,70 @@
+import axios from 'axios'
+import { HASURA_URL } from '../../constants'
 export async function getFromDipdup(walletAddress: string) {
-  const axiosResponse = {
+  const axiosTokenMetadataResponse = await axios({
+    url: `http://${HASURA_URL}:8080/v1/graphql`,
+    method: 'post',
+    headers: { 'x-hasura-admin-secret': 'changeme' },
     data: {
-      user: [
-        {
-          amount: 2,
-          contract: 'KT1BRADdqGk2eLmMqvyWzqVmPQ1RCBCbW5dY',
-          token_id: 1,
-          metadataUri: 'ipfs://Qme7xzWWcCMcgu9g2eaEAfk6bJRHHRsUfF3AvYc8BDg1NN',
-          metadata: {
-            id: 1,
-            name: '1/23 McLaren F1 Collectible',
-            description: 'The first in the McLaren F1 Team 23/23 series, this Bahrain GP digital collectible incorporates famous landmarks and code stamps of the track and air temperature at the hottest Formula 1 race ever experienced in 2005. Collect all 23/23 to be in with a chance to receive an exclusive race experience and keep your eyes peeled for smaller collections and rewards. Powered by Tezos and brought to you by Tezos ecosystem companies. Terms apply: https://collectibles.mclaren.com/policies/terms',
-            artifactUri: 'ipfs://QmQCBWyUJ3iaw8LfBDSHDKAfjjr9EcEheFdbLXNqBKNdiT',
-            displayUri: 'ipfs://QmSnANJhxw1Jb36hspXxayDVnma5ec48xi4Qq1iuzqzxcr',
-            thumbnailUri: 'ipfs://QmTB8g67SKZ2JQJVjNjSpXQSjWdCCgPcjDgmG4VuTxFF3R',
-            formats: [
-              {
-                uri: 'ipfs://QmQCBWyUJ3iaw8LfBDSHDKAfjjr9EcEheFdbLXNqBKNdiT',
-                mimeType: 'video/mp4'
-              },
-              {
-                uri: 'ipfs://QmSnANJhxw1Jb36hspXxayDVnma5ec48xi4Qq1iuzqzxcr',
-                mimeType: 'image/png',
-                dimensions: {
-                  unit: 'px',
-                  value: '1260x1780'
-                }
-              },
-              {
-                uri: 'ipfs://QmTB8g67SKZ2JQJVjNjSpXQSjWdCCgPcjDgmG4VuTxFF3R',
-                mimeType: 'image/png',
-                dimensions: {
-                  unit: 'px',
-                  value: '248x350'
-                }
-              }
-            ],
-            tags: [
-              'Sports'
-            ],
-            attributes: [{ name: 'someAttribute', value: 'someValue' }],
-            minter: 'tz2W1hS4DURJckg7iZaLXL18kh8C3SJuUaxv',
-            creators: [
-              'tz2W1hS4DURJckg7iZaLXL18kh8C3SJuUaxv'
-            ],
-            publishers: [
-              'Tezos'
-            ],
-            decimals: 0,
-            isTransferable: true,
-            isBooleanAmount: true,
-            shouldPreferSymbol: false
-          }
+      query: `query {
+        create_token {
+          contract
+          counter
+          hash
+          id
+          metadata
+          metadata_uri
+          timestamp
+          token_id
         }
-      ]
+      }`
     }
+  })
+  if (axiosTokenMetadataResponse.data.errors?.length) {
+    throw new Error(
+      `error from hasura on create-token request: ${axiosTokenMetadataResponse.data.errors[0].message}`
+    )
+  }
+  const axiosResponse = await axios({
+    url: `http://${HASURA_URL}:8080/api/rest/get_user_by_address?address=${walletAddress}`,
+    method: 'get',
+    headers: { 'x-hasura-admin-secret': 'changeme' },
+  })
+  if (axiosResponse.data.errors?.length) {
+    throw new Error(
+      `error from hasura on get_user_by_address request: ${axiosResponse.data.errors[0].message}`
+    )
   }
 
-  const IPFS_GATEWAY = `https://green-efficient-gazelle-590.mypinata.cloud/ipfs/`
+  const IPFS_GATEWAY = `https://cloudflare-ipfs.com/ipfs/`
 
-  return axiosResponse.data.user.map((u) => {
-    const formats = {
-      artifact: {
-        mimeType: u.metadata.formats[0].mimeType,
-        dimensions: u.metadata.formats[0].dimensions,
-      },
-      display: {
-        mimeType: u.metadata.formats[1].mimeType,
-        dimensions: u.metadata.formats[1].dimensions,
-      },
-      thumbnail: {
-        mimeType: u.metadata.formats[2].mimeType,
-        dimensions: u.metadata.formats[2].dimensions,
-      }
-    };
-  
-    return (new Array(u.amount)).fill({
-      artifactIpfs: u.metadata.artifactUri,
-      artifactUri: `${IPFS_GATEWAY}${u.metadata.artifactUri.split('ipfs://')[1]}`, // or cloudflare url?
-      categories: [{
-        description: 'Sports category',
-        id: 1,
-        name: 'Sports'
-      }],
+  return axiosResponse.data.user.filter(u => u.amount > 0).map((u) => {
+    const create_token = axiosTokenMetadataResponse.data.create_token.find(ct => ct.contract == u.contract && ct.token_id == u.token_id)
+    if (create_token === undefined) throw new Error(`token metadata undefined: ${u.contract} ${u.token_id}`)
+    const metadata = create_token.metadata
+    const metadataUri = create_token.metadata_uri
+
+    return {
+      artifactIpfs: metadata.artifactUri,
+      artifactUri: `${IPFS_GATEWAY}${metadata.artifactUri.split('ipfs://')[1]}`, // or cloudflare url?
+      categories: [],
       createdAt: new Date(), // ??
-      description: u.metadata.description,
-      displayIpfs: u.metadata.displayUri,
-      displayUri: `${IPFS_GATEWAY}${u.metadata.displayUri.split('ipfs://')[1]}`, // or cloudflare url?
+      description: metadata.description,
+      displayIpfs: metadata.displayUri,
+      displayUri: `${IPFS_GATEWAY}${metadata.displayUri.split('ipfs://')[1]}`, // or cloudflare url?
       editionsAvailable: 0,
-      editionsSize: 119526,
-      editionsSold: 1,
-      formats,
+      editionsSize: 7777,
+      editionsSold: u.amount,
+      formats: {},
       id: u.token_id,
-      ipfsHash: u.metadataUri,
+      ipfsHash: metadataUri,
       isProxy: false,
       metadata: {
-        attributes: u.metadata.attributes
+        attributes: metadata.attributes
       },
-      metadataIpfs: u.metadataUri,
+      metadataIpfs: metadataUri,
       mintOperationHash: undefined, // ??
-      name: u.metadata.name,
+      name: metadata.name,
       ownerStatuses: ['owned'],
       ownershipInfo: [{
         status: "owned",
@@ -107,10 +72,10 @@ export async function getFromDipdup(walletAddress: string) {
       }],
       price: 0,
       proxyNftId: undefined,
-      thumbnailIpfs: u.metadata.thumbnailUri,
-      thumbnailUri: `${IPFS_GATEWAY}${u.metadata.thumbnailUri.split('ipfs://')[1]}`, // or cloudflare url?
+      thumbnailIpfs: metadata.thumbnailUri,
+      thumbnailUri: `${IPFS_GATEWAY}${metadata.thumbnailUri.split('ipfs://')[1]}`, // or cloudflare url?
 
       contractAddress: u.contract
-    })
-  }).flat()
+    }
+  })
 }
