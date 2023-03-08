@@ -38,7 +38,7 @@ export async function getFromDipdup(walletAddress: string) {
     )
   }
 
-  const IPFS_GATEWAY = `https://cloudflare-ipfs.com/ipfs/`
+  const IPFS_GATEWAY = `https://tzconnect.mypinata.cloud/ipfs/`
 
   return axiosResponse.user.filter((u: any) => u.amount > 0).map((u: any) => {
     const create_token = axiosTokenMetadataResponse.data.create_token.find((ct: any) => ct.contract == u.contract && ct.token_id == u.token_id)
