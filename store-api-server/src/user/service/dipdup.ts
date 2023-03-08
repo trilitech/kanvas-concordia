@@ -32,15 +32,15 @@ export async function getFromDipdup(walletAddress: string) {
     headers: { 'x-hasura-admin-secret': 'changeme' },
   }))?.data
   Logger.warn(`dipdup user by address: ${JSON.stringify(axiosResponse)}`)
-  if (axiosResponse.data.errors?.length) {
+  if (axiosResponse.errors?.length) {
     throw new Error(
-      `error from hasura on get_user_by_address request: ${axiosResponse.data.errors[0].message}`
+      `error from hasura on get_user_by_address request: ${axiosResponse.errors[0].message}`
     )
   }
 
   const IPFS_GATEWAY = `https://cloudflare-ipfs.com/ipfs/`
 
-  return axiosResponse.data.user.filter((u: any) => u.amount > 0).map((u: any) => {
+  return axiosResponse.user.filter((u: any) => u.amount > 0).map((u: any) => {
     const create_token = axiosTokenMetadataResponse.data.create_token.find((ct: any) => ct.contract == u.contract && ct.token_id == u.token_id)
     if (create_token === undefined) throw new Error(`token metadata undefined: ${u.contract} ${u.token_id}`)
     const metadata = create_token.metadata
