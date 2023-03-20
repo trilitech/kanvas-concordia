@@ -64,5 +64,5 @@ substitutions:
   _REPO_REGION: europe-west2
   _MEMORY: 1Gi
   _SERVICE_ACCOUNT: cloud-run-sa@concordia-development.iam.gserviceaccount.com
-  _MIN_INSTANCE: '1'
+  _MIN_INSTANCE: '0'
   _REPOSITORY: tznftwebshop

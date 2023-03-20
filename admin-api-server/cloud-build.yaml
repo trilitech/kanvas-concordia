@@ -48,7 +48,7 @@ options:
   dynamicSubstitutions: true
 substitutions:
   _REPO_REGION: europe-west2
-  _MIN_INSTANCE: '1'
+  _MIN_INSTANCE: '0'
   _DEPLOY_REGION: europe-west2
   _VPC_CONNECTOR: central-serverless
   _CPU: '1'
