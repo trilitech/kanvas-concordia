@@ -182,6 +182,10 @@ export class UserController {
    */
   @Post('register/email')
   async registerEmail(@Body() registration: EmailRegistration): Promise<any> {
+    throw new HttpException(
+      '{"error": "this endpoint is disabled"}',
+      HttpStatus.NOT_IMPLEMENTED,
+    );
     if (
       !validator.isEmail(registration.email, {
         allow_ip_domain: true,
@@ -231,6 +235,10 @@ export class UserController {
     @Query('currency') currency: string = BASE_CURRENCY,
     @Res() resp: Response,
   ) {
+    throw new HttpException(
+      '{"error": "this endpoint is disabled"}',
+      HttpStatus.NOT_IMPLEMENTED,
+    );
     validateRequestedCurrency(currency);
     return await wrapCache(
       this.cache,
